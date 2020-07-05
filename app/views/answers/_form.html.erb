@@ -1,29 +1,22 @@
 <%= form_with(model: [discussion, answer], local: true) do |form| %>
-  <% if answer.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(answer.errors.count, "error") %> prohibited this answer from being saved:</h2>
 
-      <ul>
-      <% answer.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <div class="box tabular">
+    <% if answer.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(answer.errors.count, "error") %> prohibited this answer from being saved:</h2>
 
-  <div class="field">
-    <%= form.label :content %>
-    <%= form.text_area :content %>
-  </div>
+        <ul>
+        <% answer.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <div class="field">
-    <%= form.label :discussion_id %>
-    <%= form.text_field :discussion_id %>
-  </div>
-
-  <div class="field">
-    <%= form.label :author_id %>
-    <%= form.text_field :author_id %>
+    <p class="field">
+      <%= form.label :content %>
+      <%= form.text_area :content %>
+    </p>
   </div>
 
   <div class="actions">

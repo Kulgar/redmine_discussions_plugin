@@ -28,4 +28,6 @@
 
 <%= render @discussion.answers %>
 
-<%= render "answers/form", discussion: @discussion, answer: Answer.new %>
+<h2><%= t(".new_answer") %></h2>
+
+<%= render "answers/form", discussion: @discussion, answer: @answer %>

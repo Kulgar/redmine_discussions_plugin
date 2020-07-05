@@ -10,6 +10,8 @@ class DiscussionsController < ApplicationController
   # GET /discussions/1
   # GET /discussions/1.json
   def show
+    @answer  = @discussion.answers.build
+    @answers = @discussion.answers.where.not(id: nil)
   end
 
   # GET /discussions/new

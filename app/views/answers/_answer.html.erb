@@ -1,3 +1,7 @@
+<% if answer.new_record? %>
+  <h3>Preview</h3>
+<% end %>
+
 <p>
   <strong>Content:</strong>
   <%= answer.content %>
@@ -13,5 +17,6 @@
   <%= answer.author %>
 </p>
 
-<%= link_to 'Edit', edit_answer_path(answer) %> |
-<%= link_to 'Back', answers_path %>
+<% unless answer.new_record? %>
+  <%= link_to 'Edit', edit_discussion_answer_path(@discussion, answer) %>
+<% end %>
