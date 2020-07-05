@@ -102,10 +102,10 @@ Finally we will create a "generate issue from discussion button" that will redir
 
 Create a plugin using the redmine generator:
 
-(you can replace Discussion with the name of your plugin)
+(you can replace Lgm with the name of your plugin)
 
 ```bash
-bundle exec rails generate redmine_plugin Discussion
+bundle exec rails generate redmine_plugin Lgm
 ```
 
 Have a look at the `plugins/plugin_name` folder.
@@ -155,9 +155,9 @@ To initialize test db (we can chain rails tasks that way):
 
 To run all tests, just do: `rails test`
 
-And for our plugin (change discussion with your plugin name):
+And for our plugin (change lgm with your plugin name):
 
-`RAILS_ENV=test bundle exec rails test plugins/discussion/test`
+`RAILS_ENV=test bundle exec rails test plugins/lgm/test`
 
 Let's write our first test, and make it red. We want to test a successfull access to "/discussions"
 
@@ -193,7 +193,7 @@ end
 
 Now run test:
 
-`RAILS_ENV=test bundle exec rails test plugins/discussion/test`
+`RAILS_ENV=test bundle exec rails test plugins/lgm/test`
 
 It should fail, saying that there is no controller at all.
 
@@ -211,11 +211,11 @@ Get some help:
 
 `bundle exec rails generate redmine_plugin_controller --help`
 
-* _NAME: is the plugin name in this help usage -> discussion in this course_
+* _NAME: is the plugin name in this help usage -> Lgm in this course_
 * _CONTROLLER: is the controller name -> discussions for this case_
 
 ```bash
-bundle exec rails generate redmine_plugin_controller Discussion discussions index show new create edit update destroy
+bundle exec rails generate redmine_plugin_controller Lgm discussions index show new create edit update destroy
 ```
 
 Remove create, update and destroy views, we don't need these as you already know.
@@ -230,7 +230,7 @@ Within the index view, add a simple div:
 
 Now your unit test should pass:
 
-`RAILS_ENV=test bundle exec rails test plugins/discussion/test`
+`RAILS_ENV=test bundle exec rails test plugins/lgm/test`
 
 And you should be able to access: `http://localhost:3000/discussions`
 
@@ -243,7 +243,7 @@ If you are really stuck, ask your trainer or look at the final solution.
 Our index doesn't display much right now.
 So let's create the Discussion model and display a list discussions.
 
-`bundle exec rails generate redmine_plugin_model Discussion discussion subject:string content:text priority:belongs_to author:belongs_to project:belongs_to`
+`bundle exec rails generate redmine_plugin_model lgm discussion subject:string content:text priority:belongs_to author:belongs_to project:belongs_to`
 
 Maybe you are wondering, why priority:belongs_to and author:belongs_to? Have a look at the "issue model" under redmine you will see these belongs_to there as well. We will do the exact same thing and reuse what already exists in redmine (issue priority as priority setter for our discussions and user model as author).
 
@@ -282,10 +282,10 @@ Here, it would check for the table "authors" and "priorities" which don't exist 
 
 ```bash
 # To revert all plugin migrations (NAME=plugin name):
-bundle exec rake redmine:plugins:migrate NAME=discussion VERSION=0
+bundle exec rake redmine:plugins:migrate NAME=lgm VERSION=0
 
 # To revert to a specific migration (VERSION=migration timestamp):
-bundle exec rake redmine:plugins:migrate NAME=discussion VERSION=20200705120000
+bundle exec rake redmine:plugins:migrate NAME=lgm VERSION=20200705120000
 
 # The above command will run migrations downward up to (but not including it) the specified version
 ```
@@ -353,7 +353,7 @@ Now... you should be able to write all the code of actions, index, views, etc. o
 Finding this hard and very long? Read the bellow info point.
 
 **Info:** unfortunately redmine has no "scaffold" generator.
-But you can create a simple rails app (or reuse an app you already have), use the scaffold generator there and copy paste all the files you want from this rails app to your plugin folder.
+But you can create a simple rails app (or reuse lgm_redmine app), use the scaffold generator there and copy paste all the files you want from this rails app to your plugin folder.
 
 For instance, this is what can be done for discussions:
 
@@ -505,17 +505,17 @@ Add this in your init.rb file:
 # Patches to the Redmine core when this module is loaded.
 Rails.configuration.to_prepare do
   # Don't include the same module multiple time (like in tests)
-  unless Project.included_modules.include? Discussion::ProjectPatch
-    Project.include(Discussion::ProjectPatch)
+  unless Project.included_modules.include? Lgm::ProjectPatch
+    Project.include(Lgm::ProjectPatch)
   end
 end
 ```
 
-Then create the file: `lib/discussion/project_path.rb`
+Then create the file: `lib/lgm/project_path.rb`
 Add this code:
 
 ```ruby
-module Discussion
+module Lgm
   module ProjectPatch
     extend ActiveSupport::Concern
 
