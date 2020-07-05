@@ -1,0 +1,31 @@
+<p>
+  <strong>Subject:</strong>
+  <%= @discussion.subject %>
+</p>
+
+<p>
+  <strong>Content:</strong>
+  <%= @discussion.content %>
+</p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @discussion.project %>
+</p>
+
+<p>
+  <strong>Priority:</strong>
+  <%= @discussion.priority %>
+</p>
+
+<p>
+  <strong>Author:</strong>
+  <%= @discussion.author %>
+</p>
+
+<%= link_to 'Edit', edit_discussion_path(@discussion) %> |
+<%= link_to 'Back', discussions_path %>
+
+<%= render @discussion.answers %>
+
+<%= render "answers/form", discussion: @discussion, answer: Answer.new %>

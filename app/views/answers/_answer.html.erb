@@ -1,0 +1,17 @@
+<p>
+  <strong>Content:</strong>
+  <%= answer.content %>
+</p>
+
+<p>
+  <strong>Discussion:</strong>
+  <%= answer.discussion %>
+</p>
+
+<p>
+  <strong>Author:</strong>
+  <%= answer.author %>
+</p>
+
+<%= link_to 'Edit', edit_answer_path(answer) %> |
+<%= link_to 'Back', answers_path %>
