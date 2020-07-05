@@ -96,7 +96,7 @@ We will create private discussions regarding a specific project and only users t
 
 We will also create an API endpoint that will be able to list discussions and answers both in xml and json.
 
-Finally we will create a "generate issue from discussion button" that will send the use who clicks that button to the new issue form with content already filled with the main subject extracted from the discussion.
+Finally we will create a "generate issue from discussion button" that will redirect the user who clicks that button to the new issue form with content already filled from the discussion.
 
 ### Setup
 
