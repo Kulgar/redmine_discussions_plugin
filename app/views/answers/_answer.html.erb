@@ -8,13 +8,8 @@
 </p>
 
 <p>
-  <strong>Discussion:</strong>
-  <%= answer.discussion %>
-</p>
-
-<p>
   <strong>Author:</strong>
-  <%= answer.author %>
+  <%= answer.author&.name %>
 </p>
 
 <% unless answer.new_record? %>

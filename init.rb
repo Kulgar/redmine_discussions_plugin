@@ -6,8 +6,12 @@ Redmine::Plugin.register :lgm do
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
 
-  menu :application_menu, :discussions, {controller: "discussions", action: "index"}, caption: "discussions.menu".to_sym
+  project_module :discussions do
+    permission :view_discussions, discussions: [:show, :index]
+    permission :add_discussion, {:discussions => [:new, :create, :edit, :update, :destroy]}, :require => :member
+  end
 
-  permission :polls, { polls: [:index, :vote] }, public: true
-  menu :project_menu, :discussions, { controller: 'discussions', action: 'index' }, caption: 'Discussions', after: :activity, param: :project_id
+  delete_menu_item :project_menu, :boards
+
+  menu :project_menu, :discussions, { controller: 'discussions', action: 'index' }, caption: "discussions.menu".to_sym, after: :activity, param: :project_id
 end

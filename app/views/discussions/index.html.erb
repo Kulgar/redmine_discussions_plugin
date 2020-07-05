@@ -20,9 +20,9 @@
         <td><%= discussion.project %></td>
         <td><%= discussion.priority %></td>
         <td><%= discussion.author %></td>
-        <td><%= link_to 'Show', discussion %></td>
-        <td><%= link_to 'Edit', edit_discussion_path(discussion) %></td>
-        <td><%= link_to 'Destroy', discussion, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', [@project, discussion] %></td>
+        <td><%= link_to 'Edit', edit_project_discussion_path(@project, discussion) %></td>
+        <td><%= link_to 'Destroy', [@project, discussion], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -30,4 +30,4 @@
 
 <br>
 
-<%= link_to 'New Discussion', new_discussion_path %>
+<%= link_to 'New Discussion', new_project_discussion_path %>

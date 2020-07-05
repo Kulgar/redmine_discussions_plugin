@@ -23,8 +23,8 @@
   <%= @discussion.author %>
 </p>
 
-<%= link_to 'Edit', edit_discussion_path(@discussion) %> |
-<%= link_to 'Back', discussions_path %>
+<%= link_to 'Edit', edit_project_discussion_path(@project, @discussion) %> |
+<%= link_to 'Back', project_discussions_path(@project) %>
 
 <%= render @discussion.answers %>
 

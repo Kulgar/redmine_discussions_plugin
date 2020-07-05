@@ -1,4 +1,5 @@
 class DiscussionsController < ApplicationController
+  before_action :set_project, :authorize
   before_action :set_discussion, only: [:show, :edit, :update, :destroy]
 
   # GET /discussions
@@ -64,6 +65,11 @@ class DiscussionsController < ApplicationController
   end
 
   private
+    def set_project
+      # @project variable must be set before calling the authorize filter
+      @project = Project.find(params[:project_id])
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_discussion
       @discussion = Discussion.find(params[:id])

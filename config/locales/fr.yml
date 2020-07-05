@@ -1,4 +1,7 @@
 fr:
+  permission_add_discussion: Créer une conversation
+  permission_view_discussions: Accéder aux conversations
+  project_module_discussions: Conversations
   discussions:
     menu: "Conversations"
     index:
