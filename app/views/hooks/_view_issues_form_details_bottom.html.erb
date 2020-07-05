@@ -1,0 +1,10 @@
+<% if params[:discussion_id] %>
+  <% discussion = Discussion.find(params[:discussion_id]) %>
+  <p>
+    <%= t('.generated_from_discussion', subject: discussion.subject) %>
+  </p>
+<% end %>
+
+<% unless issue.project_id.blank? %>
+  <p><%= form.select :discussion_id, (issue.project.discussions.collect {|d| [d.subject, d.id]}), include_blank: true %></p>
+<% end %>

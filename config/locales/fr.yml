@@ -7,3 +7,8 @@ fr:
     menu: "Conversations"
     index:
       title: "Conversations"
+  hooks:
+    view_issues_form_details_bottom:
+      generated_from_discussion: "Cette demande est générée depuis la discussion '%{subject}'. Vous pouvez l'associer à une autre discussion ci-dessous"
+    view_issues_show_details_bottom:
+      discussion: "Cette tâche est liée a la discussion:"

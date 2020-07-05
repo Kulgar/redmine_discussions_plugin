@@ -490,7 +490,12 @@ Easy:
 
 ### Adding has_many :discussions
 
-This is a bit advanced in rails development, so only do that if you feel confortable.
+This is a bit advanced in rails development, so only do that if you feel confortable, skip this part if you aren't.
+
+**Do these two points only if you skip this part:**
+* remember to associate discussions to project anyway, when initializing or creating a new discussion with: `discussion.project = @project`
+* and filter discussions in index: `discussion.where(project_id: @project.id)`
+
 It is possible to "patch" (add features) to existing redmine core Classes.
 
 For instance we want to add the has_many :discussions association in Project model.
@@ -564,6 +569,26 @@ link_to "Generate issue", new_project_issue_path(@project, discussion_id: @discu
 That way we have a link that redirects us to the issue creation with some fields already filled.
 
 _note: I think you have guessed at this point that you will have to look a lot at the redmine code to develop your own things. Fortunately the redmine code isn't that hard to read and understand_
+
+### Hooks
+
+Redmine has some hooks that allows dev to insert some code here and there in the app.
+
+To see all the hooks available, use one of these three commands:
+
+```bash
+grep -r call_hook *                                       # list of source lines with hook calls
+grep -rohT 'call_hook([^)]*)'                             # list of hooks calls and source files
+grep -roh  'call_hook([^)]*)' | sort -u | grep '([^)]*)'  # list of hooks calls only
+```
+
+There is a good example in the [official documentation](https://www.redmine.org/projects/redmine/wiki/Hooks#View-hooks-2) for a view hook. We could use that example to insert a new field in the issues form.
+
+How would you add a new "discussion_id" field to the issue form? And then display in the issue show page a link to that discussion?
+
+This reuse the same "Patch" method as the one used above for projects. So again, rather do the XML View below if you don't feel comfortable enough.
+
+In any case
 
 ### XML View
 

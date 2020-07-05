@@ -1,0 +1,6 @@
+<% if issue.discussion %>
+  <p>
+    <%= t(".discussion") %>
+    <%= link_to issue.discussion.subject, [@project, issue.discussion] %>
+  </p>
+<% end %>

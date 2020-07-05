@@ -5,7 +5,12 @@ Rails.configuration.to_prepare do
   unless Project.included_modules.include? Lgm::ProjectPatch
     Project.include(Lgm::ProjectPatch)
   end
+  unless Issue.included_modules.include? Lgm::IssuePatch
+    Issue.include(Lgm::IssuePatch)
+  end
 end
+
+require_dependency 'lgm/hooks'
 
 Redmine::Plugin.register :lgm do
   name 'Lgm plugin'
