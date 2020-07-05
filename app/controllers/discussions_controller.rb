@@ -2,10 +2,18 @@ class DiscussionsController < ApplicationController
   before_action :set_project, :authorize
   before_action :set_discussion, only: [:show, :edit, :update, :destroy]
 
+  accept_api_auth :index
+
   # GET /discussions
   # GET /discussions.json
+  # GET /discussions.xml
   def index
     @discussions = Discussion.all
+
+    respond_to do |format|
+      format.html
+      format.api
+    end
   end
 
   # GET /discussions/1

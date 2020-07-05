@@ -1,0 +1,11 @@
+api.project(:id => @project.id, :name => @project.name)
+api.array :discussions, api_meta(:total_count => @discussions.size) do
+  @discussions.each do |discussion|
+    api.discussion do
+      api.id               discussion.id
+      api.subject          discussion.subject
+      api.content          discussion.content
+
+    end
+  end
+end
