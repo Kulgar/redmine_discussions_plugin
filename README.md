@@ -588,7 +588,7 @@ How would you add a new "discussion_id" field to the issue form? And then displa
 
 This reuse the same "Patch" method as the one used above for projects. So again, rather do the XML View below if you don't feel comfortable enough.
 
-In any case
+In any case, if you want to, you can have a look at the commit "24e8cd5b6a2a22c1fe54e7a86899fa51d280b21c" for this one.
 
 ### XML View
 
