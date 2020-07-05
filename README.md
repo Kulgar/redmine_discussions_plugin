@@ -35,27 +35,35 @@ Copy database connection configuration:
 `cp config/database.yml.example config/database.yml`
 
 Configure development and test configurations with the database you use.
+
 (Follow step 3 in above redmine documentation and replace production with test and development)
 
 [Install rmagick](https://github.com/rmagick/rmagick)
 Follow instructions according to your OS.
-If you get stuck, it isn't that bad... you still will be able to launch redmine. Just continue and get back to that latter.
+
+If you get stuck, it isn't that bad... you still will be able to launch redmine. Just continue and get back to that latter. Just install gems without rmagick:
+
+`bundle install --without rmagick`
 
 
 Generate a random key used to secure cookies storing session data:
+
 `bundle exec rake generate_secret_token`
 
 _note: bundle exec is used to run a command using the gem version from the current folder Gemfile(.lock), especially useful in production if gems are installed within the app folder._
 
 Do the db migration:
+
 `bundle exec rake db:migrate`
 
 Execute the redmine seed that create default configuration data:
+
 `bundle exec rake redmine:load_default_data`
 
 Select the language you want to use in redmine by default
 
 Launch app:
+
 `bundle exec rails server webrick`
 
 You should be able to log in with: admin / admin
@@ -69,6 +77,7 @@ Don't forget to also execute any other commands you needed to do to install thin
 ## Before we start with the plugin
 
 Create a new project, with the name you want.
+
 Create a new issue (ticket) and assign it to yourself (just to confirm everything is working).
 
 ## Plugin
@@ -78,9 +87,11 @@ Create a new issue (ticket) and assign it to yourself (just to confirm everythin
 ### Goals
 
 We will create a plugin that adds a "discussions" feature to redmine.
+
 Where someone can start a thread with a subject and other users can answer it.
 
 We will add that feature first at the root level of redmine and then we will move it at the project level.
+
 We will create private discussions regarding a specific project and only users that can access that project will be able to access these discussions.
 
 We will also create an API endpoint that will be able to list discussions and answers both in xml and json.
@@ -90,6 +101,7 @@ Finally we will create a "generate issue from discussion button" that will send 
 ### Setup
 
 Create a plugin using the redmine generator:
+
 (you can replace Lgm with the name of your plugin)
 
 ```bash
@@ -97,9 +109,11 @@ bundle exec rails generate redmine_plugin Lgm
 ```
 
 Have a look at the `plugins/plugin_name` folder.
+
 The `init.rb` file is the entry point, you can edit it right away with your info.
 
 Beware, any plugin generation or changes to init.rb needs you to restart the app.
+
 Restart the server and go to `http://localhost:3000/admin/plugins`
 
 You should now see the installed plugin.
@@ -107,27 +121,33 @@ You should now see the installed plugin.
 **Important:** Plugins subfolder are gitignored. So you probably should git init your new plugin folder if you want scm activated for it.
 
 **Important:** Installing new plugin from the redmine community isn't harder than what you just did.
+
 Most plugins can be downloaded directly in the plugin folder and should work. Of course, always have a look at plugins readme to see if you need to do anything else. They usually ask you to do some migrations.
 
 Also be careful with compatibility, not all plugins will work with latest redmine version.
+
 In the [plugins directory](https://www.redmine.org/plugins?utf8=%E2%9C%93&page=1&sort=&v=4.1) you can choose the version of redmine in the top right select field.
 
 ### Adding a new view
 
 First, we need to create a route to match url.
+
 Plugins are like mini rails app. They have their own routes.rb file in config folder.
 
 Edit it, add a new route:
+
 `get 'discussions', to: 'discussions#index'`
 
 #### Unit tests (if you want to)
 
 We now can do some TDD, plugins have unit tests too.
+
 You can have a look at minitest documentations:
 * https://github.com/seattlerb/minitest
 * https://guides.rubyonrails.org/testing.html -> better to look at this one
 
 Chapters 2.4 & 2.5 of the Rails guide show you a list of available test assertions.
+
 Looking at redmine unit tests should also help a lot.
 
 To initialize test db (we can chain rails tasks that way):
@@ -142,16 +162,19 @@ And for our plugin (change lgm with your plugin name):
 Let's write our first test, and make it red. We want to test a successfull access to "/discussions"
 
 Create the file `discussions_controller_test.rb` under the test folder of your plugin.
+
 The first line of every test file should be:
 
 `require File.expand_path('../../test_helper', __FILE__)`
 
 This loads the test_helper file automatically generated during plugins creation.
+
 This test_helper file has this line:
 
 `require File.expand_path(File.dirname(__FILE__) + '/../../../test/test_helper')`
 
 This loads the redmine test_helper file so that you are running all your plugins tests under the same environment as your redmine application.
+
 You will be able to access redmine fixtures thanks to that.
 
 Now, add the following code to your new test file:
@@ -175,6 +198,7 @@ Now run test:
 It should fail, saying that there is no controller at all.
 
 From now on, it is up to you to create your tests or not. This course will introduce some new info about unit tests here and there when needed.
+
 Don't do too many of them or you won't be able to finish this course.
 
 ### Generating the controller
@@ -190,7 +214,9 @@ Get some help:
 * _NAME: is the plugin name in this help usage -> Lgm in this course_
 * _CONTROLLER: is the controller name -> discussions for this case_
 
-`bundle exec rails generate redmine_plugin_controller Lgm discussions index show new create edit update destroy`
+```bash
+bundle exec rails generate redmine_plugin_controller Lgm discussions index show new create edit update destroy
+```
 
 Remove create, update and destroy views, we don't need these as you already know.
 
@@ -279,9 +305,11 @@ Now you can get the author using: `discussion.author` and you will get back a Us
 ### Playing with menus
 
 We would like our users to access our new discussions index.
+
 We need to change the init.rb file of our plugin to do so.
 
 Add this line:
+
 `menu :application_menu, :discussions, {controller: "discussions", action: "index"}, caption: 'Discussions'`
 
 (don't forget to restart server as we changed the init.rb file of our plugin)
