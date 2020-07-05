@@ -1,6 +1,5 @@
 <h1>Editing Answer</h1>
 
-<%= render 'form', answer: @answer %>
+<%= render 'form', answer: @answer, discussion: @discussion %>
 
-<%= link_to 'Show', @answer %> |
-<%= link_to 'Back', answers_path %>
+<%= link_to 'Back', project_discussion_path(@project, @discussion) %>

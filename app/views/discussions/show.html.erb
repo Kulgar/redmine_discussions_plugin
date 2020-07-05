@@ -1,33 +1,38 @@
-<p>
-  <strong>Subject:</strong>
-  <%= @discussion.subject %>
-</p>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'discussions', plugin: 'lgm' %>
+<% end %>
 
-<p>
-  <strong>Content:</strong>
-  <%= @discussion.content %>
-</p>
+<div class="discussion">
+  <h2><%= @discussion.subject %></h2>
 
-<p>
-  <strong>Project:</strong>
-  <%= @discussion.project %>
-</p>
+  <p>
+    <strong>Content:</strong>
+    <%= @discussion.content %>
+  </p>
 
-<p>
-  <strong>Priority:</strong>
-  <%= @discussion.priority %>
-</p>
+  <p>
+    <strong>Project:</strong>
+    <%= @discussion.project %>
+  </p>
 
-<p>
-  <strong>Author:</strong>
-  <%= @discussion.author %>
-</p>
+  <p>
+    <strong>Priority:</strong>
+    <%= @discussion.priority %>
+  </p>
 
-<%= link_to 'Edit', edit_project_discussion_path(@project, @discussion) %> |
-<%= link_to 'Back', project_discussions_path(@project) %>
+  <p>
+    <strong>Author:</strong>
+    <%= @discussion.author %>
+  </p>
+
+  <%= link_to 'Edit', edit_project_discussion_path(@project, @discussion) %> |
+  <%= link_to 'Generate issue', new_project_issue_path(@project, discussion_id: @discussion, issue: { description: @discussion.content, subject: @discussion.subject, priority_id: @discussion.priority_id }) %> |
+  <%= link_to 'Back', project_discussions_path(@project) %>
+</div>
 
 <%= render @discussion.answers %>
 
 <h2><%= t(".new_answer") %></h2>
 
 <%= render "answers/form", discussion: @discussion, answer: @answer %>
+

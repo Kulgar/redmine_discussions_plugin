@@ -1,17 +1,17 @@
-<% if answer.new_record? %>
-  <h3>Preview</h3>
-<% end %>
-
-<p>
-  <strong>Content:</strong>
-  <%= answer.content %>
-</p>
-
-<p>
-  <strong>Author:</strong>
-  <%= answer.author&.name %>
-</p>
-
 <% unless answer.new_record? %>
-  <%= link_to 'Edit', edit_discussion_answer_path(@discussion, answer) %>
+  <div class="answer">
+    <p>
+      <strong>Content:</strong>
+      <%= answer.content %>
+    </p>
+
+    <p>
+      <strong>Author:</strong>
+      <%= answer.author&.name %>
+    </p>
+
+    <% if answer.editable? %>
+      <%= link_to 'Edit', edit_project_discussion_answer_path(@project, @discussion, answer) %>
+    <% end %>
+  </div>
 <% end %>

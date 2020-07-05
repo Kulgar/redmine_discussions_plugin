@@ -5,4 +5,13 @@ class Discussion < ActiveRecord::Base
   belongs_to :project, optional: true
 
   validates :subject, presence: true
+
+  def visible?(user = User.current)
+    !user.nil? && user.allowed_to?(:view_discussions, project)
+  end
+
+  def editable?(user = User.current)
+    !user.nil? && user.allowed_to?(:add_discussion, project)
+  end
+
 end

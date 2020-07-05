@@ -1,0 +1,9 @@
+.discussion {
+  background: rgba(211, 211, 211, 0.4);
+}
+
+.discussion, .answer {
+  padding: 20px;
+  margin: 10px 0;
+  border: 1px solid lightgray;
+}

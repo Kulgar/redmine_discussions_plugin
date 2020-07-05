@@ -1,9 +1,14 @@
 class AnswersController < ApplicationController
+  before_action :set_project, :authorize
+
   before_action :set_discussion
   before_action :set_answer, only: [:edit, :update, :destroy]
 
   # GET /answers/1/edit
   def edit
+    unless @answer.editable?
+      redirect_to [@project, @discussion], alert: "You can't edit that answer"
+    end
   end
 
   # POST /answers
@@ -13,12 +18,10 @@ class AnswersController < ApplicationController
     @answer.author = User.current
 
     respond_to do |format|
-      if @answer.save
-        format.html { redirect_to @discussion, notice: 'Answer was successfully created.' }
-        format.json { render :show, status: :created, location: @answer }
+      if Answer.creatable?(@project) && @answer.save
+        format.html { redirect_to [@project, @discussion], notice: 'Answer was successfully created.' }
       else
         format.html { render "discussions/show" }
-        format.json { render json: @answer.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -27,12 +30,10 @@ class AnswersController < ApplicationController
   # PATCH/PUT /answers/1.json
   def update
     respond_to do |format|
-      if @answer.update(answer_params)
-        format.html { redirect_to @discussion, notice: 'Answer was successfully updated.' }
-        format.json { render :show, status: :ok, location: @answer }
+      if @answer.editable? && @answer.update(answer_params)
+        format.html { redirect_to [@project, @discussion], notice: 'Answer was successfully updated.' }
       else
         format.html { render :edit }
-        format.json { render json: @answer.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -40,14 +41,22 @@ class AnswersController < ApplicationController
   # DELETE /answers/1
   # DELETE /answers/1.json
   def destroy
-    @answer.destroy
+
     respond_to do |format|
-      format.html { redirect_to @discussion, notice: 'Answer was successfully destroyed.' }
-      format.json { head :no_content }
+      if @answer.editable?
+        @answer.destroy
+        format.html { redirect_to [@project, @discussion], notice: 'Answer was successfully destroyed.' }
+      else
+        format.html { redirect_to [@project, @discussion], notice: "You can't delete that answer" }
+      end
     end
   end
 
   private
+    def set_project
+      @project = Project.find(params[:project_id])
+    end
+
     def set_discussion
       @discussion = Discussion.find(params[:discussion_id])
     end

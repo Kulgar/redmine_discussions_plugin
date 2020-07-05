@@ -1,3 +1,12 @@
+# Patches to the Redmine core.
+Rails.configuration.to_prepare do
+  # Guards against including the module multiple time (like in tests)
+  # and registering multiple callbacks
+  unless Project.included_modules.include? Lgm::ProjectPatch
+    Project.include(Lgm::ProjectPatch)
+  end
+end
+
 Redmine::Plugin.register :lgm do
   name 'Lgm plugin'
   author 'Régis'
@@ -9,6 +18,8 @@ Redmine::Plugin.register :lgm do
   project_module :discussions do
     permission :view_discussions, discussions: [:show, :index]
     permission :add_discussion, {:discussions => [:new, :create, :edit, :update, :destroy]}, :require => :member
+
+    permission :answer_discussions, answers: [:edit, :create, :update, :destroy]
   end
 
   delete_menu_item :project_menu, :boards
