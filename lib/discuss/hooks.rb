@@ -1,4 +1,4 @@
-module Lgm
+module Discuss
   class Hooks < Redmine::Hook::ViewListener
     # This just renders the partial in
     # app/views/hooks/my_plugin/_view_issues_form_details_bottom.rhtml

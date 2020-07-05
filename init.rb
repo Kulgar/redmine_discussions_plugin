@@ -2,18 +2,18 @@
 Rails.configuration.to_prepare do
   # Guards against including the module multiple time (like in tests)
   # and registering multiple callbacks
-  unless Project.included_modules.include? Lgm::ProjectPatch
-    Project.include(Lgm::ProjectPatch)
+  unless Project.included_modules.include? Discuss::ProjectPatch
+    Project.include(Discuss::ProjectPatch)
   end
-  unless Issue.included_modules.include? Lgm::IssuePatch
-    Issue.include(Lgm::IssuePatch)
+  unless Issue.included_modules.include? Discuss::IssuePatch
+    Issue.include(Discuss::IssuePatch)
   end
 end
 
-require_dependency 'lgm/hooks'
+require_dependency 'discuss/hooks'
 
-Redmine::Plugin.register :lgm do
-  name 'Lgm plugin'
+Redmine::Plugin.register :discuss do
+  name 'Discuss plugin'
   author 'Régis'
   description 'This is a plugin for Redmine'
   version '0.0.1'

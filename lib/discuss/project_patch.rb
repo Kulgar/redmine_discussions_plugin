@@ -1,4 +1,4 @@
-module Lgm
+module Discuss
   module ProjectPatch
     extend ActiveSupport::Concern
 
