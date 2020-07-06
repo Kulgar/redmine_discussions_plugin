@@ -327,6 +327,14 @@ Don't forget the option `optional: true` for the belongs_to project association.
 
 If you look at the Issue model in Redmine, you'll see the option `class_name` used for some belongs_to. This is a way - for instance - to tell Rails that we are using a foreign_key and an association named "Author" but this foreign_key/association is actually referencing a User data.
 
+So if we update our discussion model association, we should have this:
+
+```ruby
+  belongs_to :author, class_name: 'User', optional: false
+  belongs_to :priority, class_name: 'IssuePriority', optional: true
+  belongs_to :project, optional: true
+```
+
 Create one (or more) discussion(s) from a rails console and list them by subject in the index page.
 To set an author: `discussion.author = User.first`
 Now you can get the author using: `discussion.author` and you will get back a User data.
