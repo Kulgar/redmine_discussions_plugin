@@ -85,11 +85,11 @@ Do the db migration:
 
 `bundle exec rake db:migrate`
 
-Execute the redmine seed that create default configuration data:
+Execute the redmine seed that creates default configuration data:
 
 `bundle exec rake redmine:load_default_data`
 
-Select the language you want to use in redmine by default
+Select the language you want to use in redmine by default (I used fr for this guide).
 
 Launch app:
 
@@ -101,7 +101,7 @@ You should be able to log in with: admin / admin
 
 Follow the official [Installation guide](https://www.redmine.org/projects/redmine/wiki/RedmineInstall#Step-6-Database-schema-objects-creation)
 
-Don't forget to also execute any other commands you needed to do to install things you need (like the Gemfile.local).
+Don't forget to also execute any other commands you needed to do for your specific app (like the plugin installation commands we will see in a moment).
 
 ## Before we start with the plugin
 
@@ -402,18 +402,18 @@ Also, if you copy/paste the model file from the generated code by the scaffold, 
 
 ### Permissions
 
-We want to allow only some specific profile to access the discussions feature.
-Again we can set some configuration in the init.rb file:
+We want to allow only some specific profiles to access the discussions feature.
+Again we can set some configurations in the init.rb file:
 
 ```ruby
   permission :view_discussions, discussions: [:show, :index]
   permission :add_discussion, {discussions: [:new, :create, :edit, :update, :destroy]}, require: :member
 ```
 
-Here we specific which actions are accessible in our discussions controller.
-Each permission line will equal to a new line under the permission tables in redmine configurations.
+Here we specify which actions are accessible in our discussions controller.
+Each permission line above will render a new line within the permission tables in redmine configurations.
 
-Replace menu to have our discussions tab within projects:
+Replace the existing menu line so that our discussions tab will now appear in projects menu:
 
 ```ruby
   menu :application_menu, :discussions, {controller: "discussions", action: "index"}, caption: "discussions.menu".to_sym
@@ -635,14 +635,14 @@ So, two choices here:
 For instance, here is a little guide to install rabl in your redmine project:
 
 Add the rabl gem (that will be used to generate xml).
-Create a Gemfile.local file and add this line:
+Create a Gemfile file within the root of your plugin and add this line:
 
 ```bash
 gem "rabl"
 ```
 
-The Gemfile.local file is automatically loaded by redmine when you run bundle install.
-Be warned though, Gemfile.local and Gemfile.lock are gitignored, so you would have to generate that Gemfile.local file in production too (during deployment sor instance).
+The Gemfile (or PluginGemfile) files are automatically loaded by redmine when you run bundle install (look at the end of the redmine Gemfile to see how it's done).
+Be warned though, plugins are gitignored, so do remember to reinstall your plugin(s) on every redmine installation you do.
 
 * Or you can have a look at the .rsb files in redmine core code and try to reuse the code for your plugin.
 
