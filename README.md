@@ -325,7 +325,7 @@ Don't forget the option `optional: true` for the belongs_to project association.
 
 **optional?** Redmine doesn't enforce presence of belongs_to data by default (they deactivated that configuration). But we still put the optional: true, just in case they change that default behavior in the future. You can set `optional: false` (or true) for author and priority if you want/need to.
 
-If you look at the Issue model in Redmine, you'll see the option `class_name` used for some belongs_to. This is a way - for instance - to tell Rails that we are using a foreign_key named "Author" but this foreign_key is actually referencing a User data.
+If you look at the Issue model in Redmine, you'll see the option `class_name` used for some belongs_to. This is a way - for instance - to tell Rails that we are using a foreign_key and an association named "Author" but this foreign_key/association is actually referencing a User data.
 
 Create one (or more) discussion(s) from a rails console and list them by subject in the index page.
 To set an author: `discussion.author = User.first`
