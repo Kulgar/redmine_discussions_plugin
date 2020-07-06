@@ -331,6 +331,8 @@ Create one (or more) discussion(s) from a rails console and list them by subject
 To set an author: `discussion.author = User.first`
 Now you can get the author using: `discussion.author` and you will get back a User data.
 
+**Important** don't worry about the CRUD/Rest logic and all the views and controller actions yet, we will deal with that a bit latter.
+
 ### Playing with menus
 
 We would like our users to access our new discussions index.
@@ -555,7 +557,7 @@ Rails.configuration.to_prepare do
 end
 ```
 
-Then create the file: `lib/discuss/project_path.rb`
+Then create the file: `lib/discuss/project_patch.rb`
 Add this code:
 
 ```ruby
