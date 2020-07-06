@@ -395,6 +395,11 @@ And don't forget the `resources :discussions` in your routes.rb file of your plu
 
 You also have to restart your app if your modify the routes.rb file.
 
+Don't worry if the routes to access discussions no longer work, we will repair that in a moment.
+
+Also, if you copy/paste the model file from the generated code by the scaffold, the model shouldn't inherite from `ApplicationRecord` => that class doesn't exist in redmine. So replace the inheritance with `ActiveRecord::Base`
+
+
 ### Permissions
 
 We want to allow only some specific profile to access the discussions feature.
