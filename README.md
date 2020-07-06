@@ -347,7 +347,7 @@ We are adding a "Discussion" button within our application menu. Unfortunately, 
 
 You could have a look at the official plugin guides to see what options the `menu` code accepts.
 
-
+If you access the main [projects page](http://localhost:3000/projects), you should see the new menu button at the right of the tabs.
 
 ### A bit of translations
 
@@ -384,7 +384,7 @@ Finding this hard and very long? Read the bellow info point.
 **Info:** unfortunately redmine has no "scaffold" generator.
 But you can create a simple rails app (or reuse an app you already have), use the scaffold generator there and copy paste all the files you want from this rails app to your plugin folder.
 
-For instance, this is what can be done for discussions:
+For instance, this is what can be done for discussions (from another app than redmine!):
 
 `rails g scaffold discussion subject:string content:text project:belongs_to priority:belongs_to author:belongs_to --no-jbuilder --no-scaffold-stylesheet --no-javascripts --no-stylesheets`
 
