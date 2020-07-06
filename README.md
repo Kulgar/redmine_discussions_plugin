@@ -36,7 +36,36 @@ Copy database connection configuration:
 
 Configure development and test configurations with the database you use.
 
-(Follow step 3 in above redmine documentation and replace production with test and development)
+Follow step 3 in above redmine documentation and replace production with test and development.
+
+For a postgresql db (for instance):
+
+```yaml
+# Fichier database.yml:
+development:
+  adapter: postgresql
+  database: redmine_dev
+  host: 127.0.0.1
+  username: redmine
+  password: "redmine"
+  encoding: utf8  
+​
+test:
+  adapter: postgresql
+  database: redmine_test
+  host: 127.0.0.1
+  username: redmine
+  password: "redmine"
+  encoding: utf8  
+​```
+
+```bash
+# To create the user and dbs:
+sudo su postgres
+createuser redmine -P
+createdb redmine_dev -O redmine
+createdb redmine_test -O redmine
+```
 
 [Install rmagick](https://github.com/rmagick/rmagick)
 Follow instructions according to your OS.

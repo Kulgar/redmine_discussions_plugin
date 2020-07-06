@@ -6,8 +6,6 @@ api.project_discussions do
         api.id               discussion.id
         api.subject          discussion.subject
         api.content          discussion.content
-
-
       end
     end
   end
