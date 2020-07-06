@@ -675,13 +675,15 @@ For now the page renders nothing. Let us create a `index.api.rsb` file in our di
 And add this code in it:
 
 ```ruby
-api.project(:id => @project.id, :name => @project.name)
-api.array :discussions, api_meta(:total_count => @discussions.size) do
-  @discussions.each do |discussion|
-    api.discussion do
-      api.id               discussion.id
-      api.subject          discussion.subject
-      api.content          discussion.content
+api.project_discussions do
+  api.project(:id => @project.id, :name => @project.name)
+  api.array :discussions, api_meta(:total_count => @discussions.size) do
+    @discussions.each do |discussion|
+      api.discussion do
+        api.id               discussion.id
+        api.subject          discussion.subject
+        api.content          discussion.content
+      end
     end
   end
 end
@@ -746,10 +748,10 @@ But let me show you an even better way:
 Once you have copied the generated views from the scaffold to your plugin, you should have a `show.html.erb` view.
 Rename it to `_answer.html.erb`.
 
-In you discussion show view, add this line:
+In you discussion show view, add this line wrapped in `<%= ... %>`:
 
 ```ruby
-<%= render @discussion.answers %>
+render @discussion.answers
 ```
 
 Rails will understand that it should render the partial named `_answer.html.erg` from the `answers` folder.
@@ -778,6 +780,7 @@ The partial could now look like this:
     <% end %>
   </div>
 <% end %>
+<%# %>
 ```
 
 
@@ -814,3 +817,74 @@ end
 
 That way, you can access all the projects helper method from your plugin views (you can't if you don't do that change).
 But be careful, the more core stuff you use in your plugins the more time it will take to update your plugin to be compatible with latest redmine versions.
+
+### More unit tests?
+
+You may have noticed that our first unit test we created no longer works because there is now a lot more things to set (project, permissions...). How can we repair it?
+
+We can access redmine fixtures from our unit test files.
+
+As a reminder, fixtures are files that pre-define some data with specific values for each attributes. Unfortunately redmine has no documentations about its fixtures and unit tests, so you would have to look at these files on your own to discover what data are available and which attributes are defined.
+
+For instance, we could use a bunch of fixtures in our discussions controller test:
+
+```ruby
+class DiscussionsControllerTest < ActionController::TestCase
+  fixtures  :projects,
+            :users,
+            :roles,
+            :members,
+            :member_roles,
+            :enabled_modules
+end
+```
+
+This will load some data in my test database usable in each of my unit test.
+
+`members` and `member_roles` are needed to link users to projects and specific roles. How do we know which user has access to what? You have to look at the redmine fixtures.
+
+`enabled_modules` is used to pre-enable some modules in some projects. We won't use it in our unit test, but it is good to know it.
+
+We can also point to a specific fixture, for instance we can use the setup method of minitest to automatically setup some specific data for latter use in our tests:
+
+```ruby
+  @manager_role  = roles(:roles_001)
+  @project       = projects(:projects_001)
+  @project.enabled_module_names = [:discussions]
+```
+
+Here we enable our new discussions module in the projets 001 (that comes from redmine fixtures).
+
+Now we can repair our test:
+
+```ruby
+  test "An admin should be able to access project discussions" do
+    session[:user_id] = 1
+    get :index, params: { project_id: @project.id }
+    assert_response :success
+    assert_select '#discussions'
+  end
+```
+
+* `assert_response` allows us to check the response status from rails app.
+* `asset_select` tries to search for a specific css selector in the rendered view
+
+We can also try to check a forbidden access with: `assert_response 403`
+
+**Important** in order to act as an authenticated user, we have - with redmine - to specify the `session[:user_id]` value with the id of the user we want to authenticate. Here, user with id 1 is an admin (look at redmine fixtures - again).
+
+So, our `get :index...` above, will do a get request to the index action of our discussions controller authenticated as user 1 and with project set to 1.
+
+It finds that controller thanks to name conventions for in mini test DiscussionsControllerTest class.
+
+A good exercice would be to create these two new tests:
+
+```ruby
+test "An authorized user should be able to access project discussions" do
+  # ...
+end
+
+test "A user without the right permission shouldn't be able to access project discussions" do
+  # ...
+end
+```
