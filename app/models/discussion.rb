@@ -11,7 +11,8 @@ class Discussion < ActiveRecord::Base
   end
 
   def editable?(user = User.current)
-    !user.nil? && user.allowed_to?(:add_discussion, project)
+    !user.nil? && user.allowed_to?(:add_discussion, project) &&
+    (user.admin? || author_id == user.id)
   end
 
 end

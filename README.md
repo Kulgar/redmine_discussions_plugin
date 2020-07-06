@@ -339,7 +339,13 @@ We need to change the init.rb file of our plugin to do so.
 
 Add this line:
 
-`menu :application_menu, :discussions, {controller: "discussions", action: "index"}, caption: 'Discussions'`
+```ruby
+Redmine::Plugin.register :discuss do
+
+  # ...
+  menu :application_menu, :discussions, { controller: "discussions", action: "index" }, caption: 'Discussions'
+end
+```
 
 (don't forget to restart server as we changed the init.rb file of our plugin)
 
@@ -485,6 +491,10 @@ link_to 'Destroy', [@project, discussion], method: :delete, data: { confirm: 'Ar
 link_to 'Back', discussions_path
 # becomes
 link_to 'Back', project_discussions_path(@project)
+
+link_to 'New Discussion', new_discussion_path
+# becomes
+link_to 'New Discussion', new_project_discussion_path
 
 # and
 form_with(model: discussion, local: true) do |form|
@@ -706,6 +716,157 @@ You should now be able to add some more info in your API.
 **More about redmine API** [can be found here](https://www.redmine.org/projects/redmine/wiki/Rest_api)
 
 _Note: redmine doesn't use any partials in its API, but rabl allow you to use partials in API views. Keep that in mind._
+
+### Finish discussions
+
+There is still a bit to do about discussions:
+
+* add some styling
+* improve the form
+* secure controller actions
+
+#### Styling
+
+Adding some styling to plugins is easy, simply add a stylesheet file under the `assets/stylesheets` folder of your plugin.
+
+For instance, I added a discussions.css file and put this:
+
+```css
+.discussion {
+  background: rgba(211, 211, 211, 0.4);
+}
+
+.discussion, .answer {
+  padding: 20px;
+  margin: 10px 0;
+  border: 1px solid lightgray;
+}
+```
+
+Then in my discussion show view:
+
+```html
+<div class="discussion">
+  <!-- -->
+</div>
+```
+
+Restart the app (again) and that's it.
+
+_note: redmine doesn't support sass, so you have to go with plain css files._
+
+#### Better form
+
+If we look at redmine forms, we see they use some simple div and p to style forms.
+
+Here is an example of what I did for the discussion form:
+
+```rails
+<%= form_with(model: [@project, discussion], local: true) do |form| %>
+  <div class="box tabular">
+    <% if discussion.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(discussion.errors.count, "error") %> prohibited this discussion from being saved:</h2>
+
+        <ul>
+          <% discussion.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <p class="field">
+      <%= form.label :subject %>
+      <%= form.text_field :subject %>
+    </p>
+
+    <p class="field">
+      <%= form.label :content %>
+      <%= form.text_area :content %>
+    </p>
+
+    <p><%= form.select :priority_id, (@priorities.collect {|p| [p.name, p.id]}) %></p>
+
+  </div>
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+```
+
+You will notice that I removed the project_id and author_id fields, as these should better be set in the controller during create action, example:
+
+```ruby
+  def create
+    @discussion = @project.discussions.build(discussion_params.merge(author_id: User.current.id))
+
+    respond_to do |format|
+      if @discussion.save
+        format.html { redirect_to [@project, @discussion], notice: 'Discussion was successfully created.' }
+      else
+        format.html { render :new }
+      end
+    end
+  end
+```
+
+_`@project.discussions` will only work if you did the "advanced" parts (with project patch)._
+
+#### Securing actions
+
+Looking at some redmine models, we can see the team created some `editable?` or `visible?` methods to check if a user can access or edit a specific instance of the model.
+
+Let's mimic that for our discussions. I didn't filter all the actions (yet) in my final code, but this example should help you with that:
+
+```ruby
+  # add these two methods In your Discussion model
+  def visible?(user = User.current)
+    !user.nil? && user.allowed_to?(:view_discussions, project)
+  end
+
+  def editable?(user = User.current)
+    !user.nil? && user.allowed_to?(:add_discussion, project) &&
+    (user.admin? || author_id == user.id)
+  end
+```
+
+Unlike many other Rails applications, redmine does have access to the currently logged in user within the models thanks to `User.current`. How? They use the lib [request_store](https://github.com/steveklabnik/request_store) to store some global variables accessible in the entire app per request. So they can set a current user accessible in the whole app for a specific (and each) browser session. Understanding how this works exactly is way beyong the purpose of this guide. So... I'll let you discover that on your own :-)
+
+Redmine also provides a convenient user method: `allowed_to?` to test if a specific user can or cannot do a specific action. The first parameter is the name of the permissions we set in our init.rb file. The second one is the concerned project if that permission check involves projects (so in our discussion, simply `project` which equals `self.project` - self is implicit)
+
+Now that we have these two methods, we can add some filters in our controller and views:
+
+```ruby
+  # in the update action, for instance
+  def update
+    respond_to do |format|
+      if @discussion.editable? && @discussion.update(discussion_params)
+        format.html { redirect_to [@project, @discussion], notice: 'Discussion was successfully updated.' }
+      else
+        if !@discussion.editable?
+          flash[:alert] = "You are not authorized to edit that discussion"
+        end
+        format.html { render :edit }
+      end
+    end
+  end
+```
+
+```rails
+        <!-- and in the view: -->
+        <td>
+          <% if discussion.visible? %>
+            <%= link_to 'Show', [@project, discussion] %>
+          <% end %>
+        </td>
+        <td>
+          <% if discussion.editable? %>
+            <%= link_to 'Edit', edit_project_discussion_path(@project, discussion) %>
+          <% end %>
+        </td>
+```
+
 
 
 ### Answers

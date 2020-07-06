@@ -9,6 +9,7 @@ class Answer < ActiveRecord::Base
   end
 
   def editable?(user = User.current)
-    !user.nil? && user.allowed_to?(:answer_discussions, discussion.project)
+    !user.nil? && user.allowed_to?(:answer_discussions, discussion.project) &&
+    (user.admin? || author_id == user.id)
   end
 end

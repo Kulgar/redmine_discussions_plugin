@@ -21,7 +21,11 @@
         <td><%= discussion.project %></td>
         <td><%= discussion.priority %></td>
         <td><%= discussion.author %></td>
-        <td><%= link_to 'Show', [@project, discussion] %></td>
+        <td>
+          <% if discussion.visible? %>
+            <%= link_to 'Show', [@project, discussion] %>
+          <% end %>
+        </td>
         <td>
           <% if discussion.editable? %>
             <%= link_to 'Edit', edit_project_discussion_path(@project, discussion) %>
