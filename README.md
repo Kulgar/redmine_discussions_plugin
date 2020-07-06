@@ -893,3 +893,86 @@ test "A user without the right permission shouldn't be able to access project di
   # ...
 end
 ```
+
+## About generators (rails/rake tasks)
+
+From the beginning of this course, we are using what Rails dev name rails/rake tasks to generate some code and do some migrations for our plugin.
+
+But what are these exactly?
+
+rake/rails tasks (usually named rake tasks) allow users to execute specific actions from an app code. These tasks are usually put in a `lib/tasks` folder.
+
+You can see that redmine does have this folder. You could see all the plugins tasks we used within the redmine.rake file in that folder.
+
+This can be useful to debug commands that don't work and/or look at the options they accept.
+
+The syntax is easy to understand:
+
+```ruby
+namespace :redmine do
+  ...
+  namespace :plugins do
+    desc 'Migrates installed plugins.'
+    task :migrate => :environment do
+      name = ENV['NAME']
+      ...
+    end
+  end
+end
+```
+
+This task, for instance, will allow use to use the following command in our shell:
+
+```bash
+rake redmine:plugins:migrate NAME=discuss
+```
+
+* The `namespace` keyword is a way to encapsulate rake tasks so that we don't overwrite, by mistake, an existing rake task from another library
+* As you can see we can nest as many namespaces as we want, in the command line, each namespace have to be specified and are separated using `:`
+* The `desc` keyword is a way to provide a quick description of the task (what it does), this is something you see when you do `rake -T` to list all the available tasks
+* The `task` key word is the actual task (plain ruby code) that will be executed
+* Notice the `=> :environment`, this is to tell the rake task: hey! Load my current app environment. Without that, you wouldn't be able to use rails app stuff from the task (like models, libraries...), you would only have access to plain ruby code (like when you use the `irb` console)
+* And finally, the `ENV['NAME']` is one of the many way to accept some options from the command line
+
+rake tasks are used a lot for rails web apps, some tasks can be ran during deployment process, others can be ran with linux cronjobs... they provide an easy way to do some specific regular tasks (hence the name tasks) while keeping the code to run these tasks maintenable.
+
+_note: ENV['NAME'] isn't the best way to get options from the command line, actually... the NAME env variable is sometimes used to store the hostname of your server, for instance... So... see a better way bellow_
+
+If you would like to write your own rake tasks (in your plugin for instance), you could do:
+
+```ruby
+namespace :discuss do
+  desc "Creates x discussions for your first project, create a project if non exists. 'x' can be set as a rake option (rake discuss:generate_discussions[4]"
+  task :generate_discussions, [:number, :author_id] => :environment do |task, args|
+    project = Project.first
+    project ||= Project.create(name: "Project with sample discussions")
+
+    if args[:author_id].present?
+      user = User.find(args[:author_id])
+    else
+      user = User.first
+    end
+
+    args[:number].to_i.times do |i|
+      discussion = project.discussions.create(subject: "Discussion #{i}", author_id: user.id)
+      if discussion.errors.any?
+        p discussion.errors.full_messages
+        raise "Errors while saving discussion, look at above errors"
+      end
+    end
+
+    puts "Successfully generated #{args[:number]} discussions"
+  end
+end
+```
+
+Then you could do:
+
+```bash
+# rake or rails
+rails discuss:generate_discussions[4,1]
+```
+
+This will generate 4 discussions with the user with id 1 as the author.
+
+_note: User.find will raise a ActiveRecord::RecordNotFound if the user with the specified id doesn't exist, so we are good with that. Also don't put any spaces in rake tasks arguments within [], otherwise it won't work_
